@@ -1,0 +1,23 @@
+Here’s the flow your landing page should have to feel seamless:
+
+Hero (what you already have) → Eye-catching, CTA-focused.
+
+Trusted By / Logos Bar → Show credibility.
+
+Features Grid → 3–4 core features (cards with icons + short copy).
+
+Dashboard Preview / Showcase → A mockup screenshot or illustration.
+
+Why Us Section → Side-by-side text + image (use background glow).
+
+Testimonials / Social Proof → Show real people or quotes.
+
+Pricing / CTA Section → Push user to sign up or request demo.
+
+Footer → Simple, minimal.
+
+
+
+
+
+
