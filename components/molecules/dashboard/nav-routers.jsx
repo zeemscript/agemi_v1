@@ -96,11 +96,11 @@ const Navrouter = () => {
                 : pathname.startsWith(item.link);
 
             return (
-              <SidebarMenuItem key={item.name}>
+              <SidebarMenuItem key={item.name} className="space-y-10"> 
                 <Link
                   href={item.link}
                   onClick={handleNavClick}
-                  className={`flex items-center gap-4 px-6 py-3 rounded-xl transition-all duration-300 group
+                  className={`flex items-center gap-4 px-6 py-3 rounded-4xl transition-all duration-300 group border border-accent
                     ${isActive
                     ? "bg-cyan-500/20 text-cyan-400"
                       : "text-white hover:bg-slate-800/50 hover:text-cyan-400 "
