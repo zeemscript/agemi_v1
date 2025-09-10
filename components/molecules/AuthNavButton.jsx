@@ -3,7 +3,7 @@ import Button from "../atoms/form/Button";
 export default function AuthNavButtons() {
     const isAuthenticated  = false;
     return isAuthenticated ? (
-        <Button to="/dashboard" wide round className="bg-accent hover:bg-highlight text-white px-10 py-3 animate-in-out transition-all">
+        <Button to="/dashboard" wide round className="bg-accent text-white px-10 py-3 animate-in-out transition-all">
             Dashboard
         </Button>
     ) : (
@@ -13,7 +13,7 @@ export default function AuthNavButtons() {
                     wide
                     round
                     to="/login"
-                    className="bg-accent hover:bg-highlight text-white px-10 py-3 animate-in-out transition-all "
+                    className="bg-accent text-white px-10 py-3 animate-in-out transition-all "
                 >
                     Login
                 </Button>

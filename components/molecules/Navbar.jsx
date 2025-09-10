@@ -10,6 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { AlignJustify } from 'lucide-react';
+import { useState, useEffect } from "react";
+
+
 const links = [
   { name: "Service", to: "#services" },
   { name: "Contact", to: "#contact" },
@@ -18,10 +21,28 @@ const links = [
 ];
 
 const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       {/* Desktop Nav */}
-      <nav className="px-4 sticky top-0 z-10 bg-transparent text-secondary hidden lg:flex justify-between items-center h-20 font-stretch-125%">
+      <nav className={`px-4 sticky top-0 z-10  text-secondary hidden lg:flex justify-between items-center h-20 font-stretch-125% ${scrolled
+        ? "bg-[#0B1120]/80 backdrop-blur-md shadow-md"
+        : "bg-transparent"
+        }`}>
         <Image
           src="/images/dnb-nobg.png"
           width={150}
