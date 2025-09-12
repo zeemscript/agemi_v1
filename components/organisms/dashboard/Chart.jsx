@@ -70,7 +70,7 @@ export default function SecurityAreaChart() {
                     >
                         <SelectValue placeholder="Last 14 days" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl bg-slate-900 text-white border border-slate-700 rounded-2xl">
+                    <SelectContent className="bg-slate-900 text-white border border-slate-700 rounded-2xl">
                         <SelectItem value="14d" className="rounded-2xl">
                             Last 14 days
                         </SelectItem>
