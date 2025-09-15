@@ -18,7 +18,7 @@ export default function AuthNavButtons() {
                     Login
                 </Button>
                 <Button to="/signup" wide round
-                        className="bg-transparent border border-cyan-400 hover:bg-cyan-400/10 text-white px-10 py-3 animate-in-out transition-all"    >
+                        className="bg-transparent border border-cyan-500 hover:bg-cyan-500/10 text-white px-10 py-3 animate-in-out transition-all"    >
                     Sign up
                 </Button>
             </div>

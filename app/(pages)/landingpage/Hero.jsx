@@ -7,12 +7,12 @@ import Header from "@/components/molecules/Navbar";
 
 export default function Hero() {
     return (
-        <section className="relative min-h-screen  bg-gradient-to-b from-[#0B1120] via-[#0F172A] to-[#0B1120] overflow-hidden">
+        <section className="relative h-screen  bg-gradient-to-b from-[#0B1120] via-[#0F172A] to-[#0B1120] overflow-hidden">
 
             <Header />
 
 
-            <div className="flex items-center justify-center text-center px-6 overflow-hidden">
+            <div className="px-6 overflow-hidden mt-10 sm:mt-40 flex items-center justify-center text-center">
                 {/* Background Glow Effects */}
                 <div className="absolute inset-0">
                     <div className="absolute w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl top-[-150px] left-[-150px]" />
@@ -21,7 +21,7 @@ export default function Hero() {
 
                 {/* Content */}
                 <motion.div
-                    className="relative z-10  mx-auto mt-10 sm:mt-20"
+                    className="relative z-10  mx-auto "
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1 }}
@@ -65,7 +65,7 @@ export default function Hero() {
                         </Button>
                         <Button
                             round
-                            className="bg-transparent border border-cyan-400 hover:bg-cyan-400/10 text-cyan-300 px-8 py-3 text-lg"
+                            className="bg-transparent border border-cyan-500 hover:bg-cyan-500/10 text-cyan-300 px-8 py-3 text-lg"
                         >
                             Watch Demo
                         </Button>
