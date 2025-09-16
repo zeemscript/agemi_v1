@@ -12,12 +12,12 @@ export default function AuthNavButtons() {
                 <Button
                     wide
                     round
-                    to="/login"
+                    to="/auth/signin"
                     className="bg-accent text-white px-10 py-3 animate-in-out transition-all "
                 >
                     Login
                 </Button>
-                <Button to="/signup" wide round
+                <Button to="/auth/signup" wide round
                         className="bg-transparent border border-cyan-500 hover:bg-cyan-500/10 text-white px-10 py-3 animate-in-out transition-all"    >
                     Sign up
                 </Button>
