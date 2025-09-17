@@ -29,7 +29,7 @@ export default function Hero() {
                     {/* Hero Title */}
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight font-stretch-125%">
                         Secure Your{" "}
-                        <span className="text-cyan-400">
+                        <span className="text-cyan-500">
                             <ReactTyped
                                 strings={[
                                     "APIs",

@@ -118,10 +118,10 @@ export default function LogsCard() {
                                 {/* Row 1: Icon + message + time */}
                                 <div className="flex items-center gap-3 mb-2">
                                     {/* glowing status dot */}
-                                    <span className="relative h-3 w-3 hidden sm:flex">
+                                    {/* <span className="relative h-3 w-3 hidden sm:flex">
                                         <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75 animate-ping"></span>
                                         <span className="relative inline-flex h-3 w-3 rounded-full bg-cyan-500"></span>
-                                    </span>
+                                    </span> */}
 
                                     {getIcon(log.type)}
 
