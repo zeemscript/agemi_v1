@@ -23,12 +23,10 @@ const page = () => {
                 </div>
             </div>
             <div className="relative hidden bg-muted lg:block">
-                <Image
-                    src="/images/mosque.png"
+                <img
+                    src="/auth_img.png"
                     alt="Image"
-                    width={250}
-                    height={250}
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    className="absolute inset-0 h-full w-full object-cover"
                 />
             </div>
         </div>

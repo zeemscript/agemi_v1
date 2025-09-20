@@ -5,7 +5,6 @@ import { Loader2Icon } from 'lucide-react';
 import Ripples from 'react-ripples';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { poppins_500 } from '@/lib/config/font.config';
 
 const Button = ({
     children,
@@ -27,7 +26,6 @@ const Button = ({
 }) => {
     const baseStyles = cn(
         'relative inline-flex items-center justify-center font-medium focus:outline-none transition-all duration-200',
-        poppins_500.className,
         round ? 'rounded-full px-5 py-2.5' : 'rounded-lg px-4 py-2',
         wide && 'w-full',
         disabled && 'opacity-50 cursor-not-allowed'
