@@ -112,7 +112,7 @@ export function SigninForm({ className, ...props }) {
 
                     <div className="text-center text-sm ">
                         Don't have an account?{" "}
-                        <Link href="/signup" className="underline underline-offset-4">
+                        <Link href="/auth/signup" className="underline underline-offset-4">
                             Sign Up
                         </Link>
                     </div>
