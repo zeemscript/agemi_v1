@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { poppins_400 } from "@/lib/config/font.config";
+// import { poppins_400 } from "@/lib/config/font.config";
 
 const Searchbox = ({ className, onSearch }) => {
   const [value, setValue] = useState("");
@@ -25,9 +25,7 @@ const Searchbox = ({ className, onSearch }) => {
         type="search"
         placeholder={"Search..."}
         className={cn(
-          "bg-transparent text-sm w-full outline-none border-none placeholder:text-gray-500",
-          poppins_400.className
-        )}
+          "bg-transparent text-sm w-full outline-none border-none placeholder:text-gray-500")}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}

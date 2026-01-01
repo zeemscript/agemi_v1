@@ -14,8 +14,8 @@ export default function Layout({ children }) {
             <NextTopLoader
                 color="#38bdf8"
                 initialPosition={0.09}
-                crawlSpeed={100}
-                height={10}
+                crawlSpeed={80}
+                height={4}
                 crawl={false}
                 showSpinner={false}
                 easing="ease"
