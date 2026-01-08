@@ -253,7 +253,7 @@ export default function AlertsPage() {
             <h1 className="text-3xl sm:text-4xl font-bold text-white">
               Alerts
             </h1>
-            <p className="text-slate-400 mt-2">
+            <p className="text-black font-medium text-lg mt-2">
               Monitor and manage system alerts in real-time
             </p>
           </div>
@@ -278,38 +278,35 @@ export default function AlertsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 rounded-2xl"
       >
         {[
           {
             label: "Total Alerts",
             value: totalCount,
-            color: "from-blue-500 to-cyan-500",
+  
           },
           {
             label: "Critical",
             value: criticalCount,
-            color: "from-red-500 to-orange-500",
+           
           },
           {
             label: "Active",
             value: activeCount,
-            color: "from-orange-500 to-yellow-500",
+          
           },
           {
             label: "Resolved",
             value: alerts.filter((a) => a.status === "resolved").length,
-            color: "from-emerald-500 to-teal-500",
+    
           },
         ].map((stat, idx) => (
           <Card
             key={idx}
-            className="bg-gradient-to-br border-0 text-white overflow-hidden"
-            style={{
-              backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))`,
-            }}
+            className="bg-slate-900 text-white overflow-hidden rounded-2xl"
           >
-            <div className={`bg-gradient-to-br ${stat.color} p-4`}>
+            <div className="p-4">
               <div className="text-sm text-white/80">{stat.label}</div>
               <div className="text-2xl font-bold mt-1">{stat.value}</div>
             </div>
@@ -322,9 +319,9 @@ export default function AlertsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-[#0A0F1C] border border-cyan-500/30 rounded-lg p-4 space-y-4"
+        className="bg-[#0A0F1C] border border-cyan-500/30 rounded-2xl p-6 space-y-4"
       >
-        <div className="flex items-center gap-2 text-white">
+        <div className="flex items-center gap-2 text-white p-1">
           <Filter size={20} />
           <span className="font-semibold">Filters</span>
         </div>
@@ -335,32 +332,32 @@ export default function AlertsPage() {
             placeholder="Search alerts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-slate-900/50 border-slate-700 text-white placeholder-slate-500"
+            className="bg-slate-900/50 border-slate-700 text-white placeholder-slate-500 rounded-2xl"
           />
 
           {/* Severity Filter */}
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
-            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white">
+            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
               <SelectValue placeholder="Filter by severity" />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-700">
-              <SelectItem value="all">All Severities</SelectItem>
-              <SelectItem value="critical">Critical</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="warning">Warning</SelectItem>
-              <SelectItem value="info">Info</SelectItem>
+            <SelectContent className="bg-slate-900 border-slate-700 rounded-2xl">
+              <SelectItem value="all" className="rounded-2xl">All Severities</SelectItem>
+              <SelectItem value="critical" className="rounded-2xl">Critical</SelectItem>
+              <SelectItem value="high" className="rounded-2xl">High</SelectItem>
+              <SelectItem value="warning" className="rounded-2xl">Warning</SelectItem>
+              <SelectItem value="info" className="rounded-2xl">Info</SelectItem>
             </SelectContent>
           </Select>
 
           {/* Status Filter */}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white">
+          <Select value={statusFilter} onValueChange={setStatusFilter} className="rounded-2xl">
+            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-700">
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
+            <SelectContent className="bg-slate-900 border-slate-700 rounded-2xl">
+              <SelectItem value="all" className="rounded-2xl">All Status</SelectItem>
+              <SelectItem value="active" className="rounded-2xl">Active</SelectItem>
+              <SelectItem value="resolved" className="rounded-2xl">Resolved</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -420,7 +417,7 @@ export default function AlertsPage() {
                 transition={{ duration: 0.2 }}
                 layoutId={`alert-${alert.id}`}
               >
-                <Card className="bg-gradient-to-r from-[#0A0F1C] to-[#151B2C] border border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 overflow-hidden">
+                <Card className="bg-gradient-to-r from-[#0A0F1C] to-[#151B2C] rounded-2xl border border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 overflow-hidden">
                   <CardContent className="p-0">
                     <div className="flex gap-4 p-4">
                       {/* Icon */}
@@ -432,7 +429,7 @@ export default function AlertsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3 flex-wrap">
                           <div className="flex-1">
-                            <h3 className="text-white font-semibold text-base sm:text-lg">
+                            <h3 className="text-white font-semibold text-base sm:text-lg rounded-2xl">
                               {alert.title}
                             </h3>
                             <p className="text-slate-400 text-sm mt-1">
@@ -444,12 +441,12 @@ export default function AlertsPage() {
                           <div className="flex gap-2 flex-wrap justify-end">
                             <Badge
                               variant={getSeverityBadgeColor(alert.severity)}
-                              className="capitalize"
+                              className="capitalize rounded-2xl"
                             >
                               {alert.severity}
                             </Badge>
                             <Badge
-                              className={`capitalize border ${getStatusColor(
+                              className={`capitalize border  rounded-2xl ${getStatusColor(
                                 alert.status
                               )}`}
                               variant="outline"
