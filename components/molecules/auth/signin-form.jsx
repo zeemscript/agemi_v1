@@ -54,7 +54,7 @@ export function SigninForm({ className, ...props }) {
             <form className={cn("flex flex-col gap-6", className)} onSubmit={handleSubmit}>
                 <div className="flex flex-col items-center gap-2 text-center">
                     <h1 className="text-2xl sm:text-4xl font-bold font-stretch-125%">Welcome back</h1>
-                    <p className="text-sm  text-muted-foreground">
+                    <p className="text-sm  text-start text-muted-foreground">
                         Enter your email and password to login.
                     </p>
                 </div>

@@ -107,7 +107,7 @@ export default function LogsCard() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                                className="relative border border-cyan-500/20 rounded-xl p-4 bg-[#0F172A]/40 backdrop-blur-md hover:border-cyan-400/40 transition"
+                                className="relative border border-cyan-500/20 p-4 bg-[#0F172A]/40 backdrop-blur-md hover:border-cyan-400/40 transition"
                             >
                                 {/* glowing corner accents */}
                                 <div className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-cyan-400"></div>
@@ -117,18 +117,11 @@ export default function LogsCard() {
 
                                 {/* Row 1: Icon + message + time */}
                                 <div className="flex items-center gap-3 mb-2">
-                                    {/* glowing status dot */}
-                                    {/* <span className="relative h-3 w-3 hidden sm:flex">
-                                        <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75 animate-ping"></span>
-                                        <span className="relative inline-flex h-3 w-3 rounded-full bg-cyan-500"></span>
-                                    </span> */}
-
                                     {getIcon(log.type)}
 
                                     <p className="text-sm font-mono flex-1">{log.message}</p>
                                     <span className="text-xs text-gray-400 font-mono">{log.time}</span>
                                 </div>
-
                                 {/* Row 2: Request details */}
                                 <div className="grid grid-cols-2 sm:grid-cols-4 font-mono gap-2 pl-7 pt-1">
                                     <span className="text-cyan-300 text-xs">Type: {log.reqType}</span>

@@ -257,19 +257,7 @@ export default function AlertsPage() {
               Monitor and manage system alerts in real-time
             </p>
           </div>
-          <div className="flex gap-3">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-red-400">{activeCount}</div>
-              <div className="text-xs text-slate-400">Active</div>
-            </div>
-            <div className="w-px bg-slate-700" />
-            <div className="text-right">
-              <div className="text-2xl font-bold text-orange-400">
-                {criticalCount}
-              </div>
-              <div className="text-xs text-slate-400">Critical</div>
-            </div>
-          </div>
+       
         </div>
       </motion.div>
 
@@ -278,7 +266,7 @@ export default function AlertsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 rounded-2xl"
+        className="grid grid-cols-2 sm:grid-cols-4 h-36 gap-3 rounded-2xl"
       >
         {[
           {
@@ -304,11 +292,11 @@ export default function AlertsPage() {
         ].map((stat, idx) => (
           <Card
             key={idx}
-            className="bg-slate-900 text-white overflow-hidden rounded-2xl"
+            className="bg-slate-900 text-white overflow-hidden rounded-2xl flex justify-center"
           >
-            <div className="p-4">
-              <div className="text-sm text-white/80">{stat.label}</div>
-              <div className="text-2xl font-bold mt-1">{stat.value}</div>
+            <div className="p-4 text-start gap-2">
+              <div className="text-7xl font-bold mt-1">{stat.value}</div>
+              <div className="text-sm text-white/80 pl-3">{stat.label}</div>
             </div>
           </Card>
         ))}
@@ -326,16 +314,20 @@ export default function AlertsPage() {
           <span className="font-semibold">Filters</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="flex gap-4">
           {/* Search */}
+          <div className="w-full">
           <Input
             placeholder="Search alerts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="bg-slate-900/50 border-slate-700 text-white placeholder-slate-500 rounded-2xl"
           />
+          </div>
 
+       
           {/* Severity Filter */}
+             <div>
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
             <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
               <SelectValue placeholder="Filter by severity" />
@@ -348,8 +340,9 @@ export default function AlertsPage() {
               <SelectItem value="info" className="rounded-2xl">Info</SelectItem>
             </SelectContent>
           </Select>
-
-          {/* Status Filter */}
+            </div>
+<div>
+{/* Status Filter */}
           <Select value={statusFilter} onValueChange={setStatusFilter} className="rounded-2xl">
             <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
               <SelectValue placeholder="Filter by status" />
@@ -360,7 +353,9 @@ export default function AlertsPage() {
               <SelectItem value="resolved" className="rounded-2xl">Resolved</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+
+          
+     
 
         {/* Active Filters Display */}
         {(searchTerm || severityFilter !== "all" || statusFilter !== "all") && (
@@ -397,6 +392,8 @@ export default function AlertsPage() {
             )}
           </div>
         )}
+           </div>
+           </div>
       </motion.div>
 
       {/* Alerts List */}

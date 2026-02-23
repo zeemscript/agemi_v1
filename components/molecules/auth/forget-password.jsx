@@ -33,19 +33,20 @@ const ForgetPassword = ({ className, onSuccess, ...props }) => {
 
     return (
         <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
-            <div className="flex flex-col items-center gap-2 text-center">
-                <p className="text-sm text-center text-muted-foreground">
+            <div className="flex flex-col items-center gap-2 text-center ">
+                <p className="text-sm text-center text-slate-900">
                     Enter your email address to receive a password reset link.
                 </p>
             </div>
             <div className="grid gap-4">
-                <div className="grid gap-2">
+                <div className="grid gap-2 text-slate-900">
                     <Label htmlFor="email">Email</Label>
                     <Input
                         id="email"
                         name="email"
                         type="email"
                         placeholder="you@example.com"
+                        className="rounded-full text-slate-900"
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -53,7 +54,7 @@ const ForgetPassword = ({ className, onSuccess, ...props }) => {
                 </div>
 
                 <Button
-                    className="bg-accent"
+                    className="bg-accent "
                     wide
                     round
                     loading={isLoading}
