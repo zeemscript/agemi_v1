@@ -1,18 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
   Table,
   TableBody,
   TableCell,
@@ -20,536 +10,322 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  AlertCircle,
-  AlertTriangle,
-  Info,
-  CheckCircle2,
-  Trash2,
-  Eye,
-  EyeOff,
-  Filter,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import Button from "@/components/atoms/form/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import DashboardHeader from "@/components/molecules/dashboard/DashboardHeader";
+import { 
+  AlertCircle, 
+  AlertTriangle, 
+  Info, 
+  CheckCircle2, 
+  Search, 
+  ChevronRight, 
+  Bell, 
+  ShieldAlert, 
+  Clock, 
+  Activity, 
   X,
+  ExternalLink,
+  Shield,
+  Zap,
+  ZapOff,
+  MoreVertical
 } from "lucide-react";
 
-// Mock alerts data
-const mockAlerts = [
-  {
-    id: 1,
-    title: "High Traffic Detected",
-    description: "Requests exceeded 10,000 req/s threshold",
-    severity: "critical",
-    type: "traffic",
-    status: "active",
-    timestamp: new Date(Date.now() - 5 * 60000),
-    endpoint: "/api/v1/cdn",
-    affectedServices: "CDN Cache Layer",
-  },
-  {
-    id: 2,
-    title: "Cache Hit Ratio Low",
-    description: "Cache hit ratio dropped to 45%, expected 75%+",
-    severity: "warning",
-    type: "cache",
-    status: "active",
-    timestamp: new Date(Date.now() - 15 * 60000),
-    endpoint: "/api/v1/cache",
-    affectedServices: "Cache Manager",
-  },
-  {
-    id: 3,
-    title: "DDoS Attack Detected",
-    description: "Detected 50,000+ requests from single IP range",
-    severity: "critical",
-    type: "security",
-    status: "resolved",
-    timestamp: new Date(Date.now() - 1 * 60 * 60000),
-    endpoint: "/api/v1/security",
-    affectedServices: "WAF Protection",
-  },
-  {
-    id: 4,
-    title: "SSL Certificate Expiring",
-    description: "SSL certificate expires in 7 days",
-    severity: "high",
-    type: "certificate",
-    status: "active",
-    timestamp: new Date(Date.now() - 2 * 60 * 60000),
-    endpoint: "/api/v1/certs",
-    affectedServices: "SSL/TLS Manager",
-  },
-  {
-    id: 5,
-    title: "Origin Server Slow Response",
-    description: "Average response time 2500ms (threshold: 1000ms)",
-    severity: "warning",
-    type: "performance",
-    status: "active",
-    timestamp: new Date(Date.now() - 30 * 60000),
-    endpoint: "/api/v1/origin",
-    affectedServices: "Origin Health Monitor",
-  },
-  {
-    id: 6,
-    title: "Firewall Rule Updated",
-    description: "Firewall rule #42 updated by admin",
-    severity: "info",
-    type: "configuration",
-    status: "resolved",
-    timestamp: new Date(Date.now() - 3 * 60 * 60000),
-    endpoint: "/api/v1/firewall",
-    affectedServices: "Security Config",
-  },
-  {
-    id: 7,
-    title: "Bandwidth Quota Reached",
-    description: "Monthly bandwidth quota at 92%",
-    severity: "high",
-    type: "quota",
-    status: "active",
-    timestamp: new Date(Date.now() - 45 * 60000),
-    endpoint: "/api/v1/billing",
-    affectedServices: "Billing Manager",
-  },
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
+import { 
+  Bar, 
+  BarChart, 
+  CartesianGrid, 
+  XAxis, 
+  YAxis,
+  Area,
+  AreaChart,
+  ResponsiveContainer
+} from "recharts";
+
+const volumeData = [
+  { day: "Mon", total: 240, critical: 40 },
+  { day: "Tue", total: 300, critical: 80 },
+  { day: "Wed", total: 200, critical: 30 },
+  { day: "Thu", total: 278, critical: 90 },
+  { day: "Fri", total: 189, critical: 20 },
+  { day: "Sat", total: 239, critical: 50 },
+  { day: "Sun", total: 349, critical: 70 },
 ];
 
-// Severity icon mapping
-const getSeverityIcon = (severity) => {
-  switch (severity) {
-    case "critical":
-      return <AlertCircle className="text-red-500" size={18} />;
-    case "high":
-      return <AlertTriangle className="text-orange-500" size={18} />;
-    case "warning":
-      return <AlertTriangle className="text-yellow-500" size={18} />;
-    case "info":
-      return <Info className="text-blue-500" size={18} />;
-    default:
-      return <CheckCircle2 className="text-green-500" size={18} />;
+const activityData = [
+  { time: "00:00", active: 40 },
+  { time: "04:00", active: 65 },
+  { time: "08:00", active: 50 },
+  { time: "12:00", active: 85 },
+  { time: "16:00", active: 70 },
+  { time: "20:00", active: 90 },
+  { time: "23:59", active: 60 },
+];
+
+const chartConfig = {
+  total: {
+    label: "Total Alerts",
+    color: "hsl(var(--cyan-500))",
+  },
+  critical: {
+    label: "Critical",
+    color: "hsl(var(--rose-500))",
+  },
+  active: {
+    label: "Activity",
+    color: "hsl(var(--cyan-500))",
   }
 };
 
-// Severity badge color
-const getSeverityBadgeColor = (severity) => {
-  switch (severity) {
-    case "critical":
-      return "destructive";
-    case "high":
-      return "outline";
-    case "warning":
-      return "secondary";
-    case "info":
-      return "default";
-    default:
-      return "default";
-  }
-};
-
-// Status badge color
-const getStatusColor = (status) => {
-  switch (status) {
-    case "active":
-      return "bg-red-500/20 text-red-300 border-red-500/30";
-    case "resolved":
-      return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
-    default:
-      return "bg-slate-500/20 text-slate-300 border-slate-500/30";
-  }
-};
-
-// Format time
-const formatTime = (date) => {
-  const now = new Date();
-  const diff = now - date;
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return date.toLocaleDateString();
-};
+const mockAlerts = [
+  { id: 1, title: "Critical: SQL Injection Attempt", description: "Blocked 45 maliciously crafted requests from 45.122.1.10", severity: "critical", type: "Security", status: "active", time: "2m ago", service: "WAF Layer 7", impact: "High" },
+  { id: 2, title: "Warning: High Latency at Edge", description: "Edge node 'LGA-01' reporting 450ms avg latency", severity: "warning", type: "Performance", status: "active", time: "12m ago", service: "CDN Edge", impact: "Medium" },
+  { id: 3, title: "DDoS mitigation active", description: "Rate limiting applied to /search endpoint (12k req/min)", severity: "critical", type: "Traffic", status: "active", time: "15m ago", service: "Rate Limiter", impact: "High" },
+  { id: 4, title: "Cache Purge Completed", description: "Global invalidation for /* successful", severity: "info", type: "System", status: "resolved", time: "1h ago", service: "Cache Manager", impact: "Low" },
+  { id: 5, title: "SSL Cert Expiry (7 Days)", description: "Certificate for agemi.io expires soon", severity: "warning", type: "Security", status: "active", time: "2h ago", service: "SSL Manager", impact: "Medium" },
+];
 
 export default function AlertsPage() {
-  const [alerts, setAlerts] = useState(mockAlerts);
-  const [filteredAlerts, setFilteredAlerts] = useState(mockAlerts);
+  const [selectedAlert, setSelectedAlert] = useState(mockAlerts[0]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [severityFilter, setSeverityFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
-  const [expandedAlert, setExpandedAlert] = useState(null);
 
-  // Filter alerts
-  useEffect(() => {
-    let filtered = alerts.filter((alert) => !dismissedAlerts.has(alert.id));
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (alert) =>
-          alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          alert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          alert.affectedServices.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Severity filter
-    if (severityFilter !== "all") {
-      filtered = filtered.filter((alert) => alert.severity === severityFilter);
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((alert) => alert.status === statusFilter);
-    }
-
-    setFilteredAlerts(filtered);
-  }, [searchTerm, severityFilter, statusFilter, alerts, dismissedAlerts]);
-
-  // Dismiss alert
-  const dismissAlert = (id) => {
-    setDismissedAlerts((prev) => new Set(prev).add(id));
-  };
-
-  // Resolve alert
-  const resolveAlert = (id) => {
-    setAlerts((prev) =>
-      prev.map((alert) =>
-        alert.id === id ? { ...alert, status: "resolved" } : alert
-      )
-    );
-  };
-
-  // Delete alert permanently
-  const deleteAlert = (id) => {
-    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
-  };
-
-  // Toggle expand
-  const toggleExpand = (id) => {
-    setExpandedAlert(expandedAlert === id ? null : id);
-  };
-
-  const criticalCount = alerts.filter(
-    (a) => a.severity === "critical" && !dismissedAlerts.has(a.id)
-  ).length;
-  const activeCount = alerts.filter(
-    (a) => a.status === "active" && !dismissedAlerts.has(a.id)
-  ).length;
-  const totalCount = alerts.filter((a) => !dismissedAlerts.has(a.id)).length;
+  const filteredAlerts = useMemo(() => {
+    return mockAlerts.filter(alert => {
+      const matchesSearch = alert.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           alert.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesSearch;
+    });
+  }, [searchTerm]);
 
   return (
-    <div className="p-2 sm:p-6 space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white">
-              Alerts
-            </h1>
-            <p className="text-black font-medium text-lg mt-2">
-              Monitor and manage system alerts in real-time
-            </p>
-          </div>
-       
-        </div>
-      </motion.div>
+    <div className="min-h-screen bg-transparent pb-12">
+      <DashboardHeader 
+        title="Incident Command" 
+        subtitle="Global edge security incidents and firewall enforcement telemetry."
+        showButton 
+        buttonText="Check Integrity"
+      />
 
-      {/* Stats Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="grid grid-cols-2 sm:grid-cols-4 h-36 gap-3 rounded-2xl"
-      >
-        {[
-          {
-            label: "Total Alerts",
-            value: totalCount,
-  
-          },
-          {
-            label: "Critical",
-            value: criticalCount,
-           
-          },
-          {
-            label: "Active",
-            value: activeCount,
-          
-          },
-          {
-            label: "Resolved",
-            value: alerts.filter((a) => a.status === "resolved").length,
-    
-          },
-        ].map((stat, idx) => (
-          <Card
-            key={idx}
-            className="bg-slate-900 text-white overflow-hidden rounded-2xl flex justify-center"
-          >
-            <div className="p-4 text-start gap-2">
-              <div className="text-7xl font-bold mt-1">{stat.value}</div>
-              <div className="text-sm text-white/80 pl-3">{stat.label}</div>
-            </div>
+      <div className="px-6 py-8 space-y-8 max-w-[1600px] mx-auto">
+        {/* Top Metric Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-transparent border-slate-800 shadow-none rounded-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-slate-800 rounded-sm">
+                  <AlertCircle className="text-slate-400" size={18} />
+                </div>
+                <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Active Alerts</p>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-4xl font-bold text-white tracking-tighter">4,372</h3>
+                <Badge className="bg-emerald-500/10 text-emerald-500 font-bold text-[10px] rounded-full px-2 border-none">+3.2%</Badge>
+              </div>
+            </CardContent>
           </Card>
-        ))}
-      </motion.div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-[#0A0F1C] border border-cyan-500/30 rounded-2xl p-6 space-y-4"
-      >
-        <div className="flex items-center gap-2 text-white p-1">
-          <Filter size={20} />
-          <span className="font-semibold">Filters</span>
+          <Card className="bg-transparent border-slate-800 shadow-none rounded-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-slate-800 rounded-sm">
+                  <ShieldAlert className="text-slate-400" size={18} />
+                </div>
+                <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Critical Gaps</p>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-4xl font-bold text-white tracking-tighter">12</h3>
+                <Badge className="bg-rose-500/10 text-rose-500 font-bold text-[10px] rounded-full px-2 border-none">High Risk</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-transparent border-slate-800 shadow-none rounded-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-slate-800 rounded-sm">
+                  <Activity className="text-slate-400" size={18} />
+                </div>
+                <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Global Mean TTL</p>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-4xl font-bold text-white tracking-tighter">842ms</h3>
+                <Badge className="bg-slate-800 text-slate-400 font-bold text-[10px] rounded-full px-2 border-none">Stable</Badge>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="flex gap-4">
-          {/* Search */}
-          <div className="w-full">
-          <Input
-            placeholder="Search alerts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-slate-900/50 border-slate-700 text-white placeholder-slate-500 rounded-2xl"
-          />
-          </div>
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card className="bg-transparent border-slate-800 shadow-none rounded-sm overflow-hidden flex flex-col">
+            <CardHeader className="border-b border-slate-800 px-6 py-6 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold text-white uppercase tracking-widest">Alert Volume (7D)</CardTitle>
+                <p className="text-[10px] text-slate-500 uppercase mt-1">Aggregated incident count by severity</p>
+              </div>
+              <div className="flex items-center gap-4">
+                 <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-cyan-500" />
+                    <span className="text-[10px] text-slate-500 font-bold uppercase">Total</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-rose-500" />
+                    <span className="text-[10px] text-slate-500 font-bold uppercase">Critical</span>
+                 </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 h-[350px]">
+              <ChartContainer config={chartConfig} className="h-full w-full">
+                <BarChart data={volumeData}>
+                  <CartesianGrid vertical={false} stroke="#1e293b" strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 10 }}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 10 }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="total" fill="#06b6d4" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="critical" fill="#f43f5e" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
 
-       
-          {/* Severity Filter */}
-             <div>
-          <Select value={severityFilter} onValueChange={setSeverityFilter}>
-            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
-              <SelectValue placeholder="Filter by severity" />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-700 rounded-2xl">
-              <SelectItem value="all" className="rounded-2xl">All Severities</SelectItem>
-              <SelectItem value="critical" className="rounded-2xl">Critical</SelectItem>
-              <SelectItem value="high" className="rounded-2xl">High</SelectItem>
-              <SelectItem value="warning" className="rounded-2xl">Warning</SelectItem>
-              <SelectItem value="info" className="rounded-2xl">Info</SelectItem>
-            </SelectContent>
-          </Select>
+          <Card className="bg-transparent border-slate-800 shadow-none rounded-sm overflow-hidden flex flex-col">
+            <CardHeader className="border-b border-slate-800 px-6 py-6 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold text-white uppercase tracking-widest">Firewall Enforcement</CardTitle>
+                <p className="text-[10px] text-slate-500 uppercase mt-1">Active request mitigation activity</p>
+              </div>
+              <Activity size={16} className="text-cyan-500 animate-pulse" />
+            </CardHeader>
+            <CardContent className="p-6 h-[350px]">
+              <ChartContainer config={chartConfig} className="h-full w-full">
+                <AreaChart data={activityData}>
+                   <defs>
+                     <linearGradient id="fillActive" x1="0" y1="0" x2="0" y2="1">
+                       <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
+                       <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                     </linearGradient>
+                   </defs>
+                  <CartesianGrid vertical={false} stroke="#1e293b" strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="time" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 10 }}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748b', fontSize: 10 }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                  <Area
+                    type="monotone"
+                    dataKey="active"
+                    stroke="#06b6d4"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#fillActive)"
+                  />
+                </AreaChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Alert Queue Table */}
+        <Card className="bg-transparent border-slate-800 shadow-none rounded-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800 px-6 py-6 bg-slate-900/10">
+            <div className="flex items-baseline gap-3">
+              <CardTitle className="text-xl font-bold text-white tracking-tight">Active Queue</CardTitle>
+              <span className="text-xs text-slate-500 font-medium uppercase tracking-widest">Monitoring 42 edge nodes</span>
             </div>
-<div>
-{/* Status Filter */}
-          <Select value={statusFilter} onValueChange={setStatusFilter} className="rounded-2xl">
-            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-white rounded-2xl">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-700 rounded-2xl">
-              <SelectItem value="all" className="rounded-2xl">All Status</SelectItem>
-              <SelectItem value="active" className="rounded-2xl">Active</SelectItem>
-              <SelectItem value="resolved" className="rounded-2xl">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
-
-          
-     
-
-        {/* Active Filters Display */}
-        {(searchTerm || severityFilter !== "all" || statusFilter !== "all") && (
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-700">
-            {searchTerm && (
-              <Badge variant="secondary" className="gap-2">
-                Search: {searchTerm}
-                <X
-                  size={14}
-                  className="cursor-pointer"
-                  onClick={() => setSearchTerm("")}
-                />
-              </Badge>
-            )}
-            {severityFilter !== "all" && (
-              <Badge variant="secondary" className="gap-2">
-                Severity: {severityFilter}
-                <X
-                  size={14}
-                  className="cursor-pointer"
-                  onClick={() => setSeverityFilter("all")}
-                />
-              </Badge>
-            )}
-            {statusFilter !== "all" && (
-              <Badge variant="secondary" className="gap-2">
-                Status: {statusFilter}
-                <X
-                  size={14}
-                  className="cursor-pointer"
-                  onClick={() => setStatusFilter("all")}
-                />
-              </Badge>
-            )}
-          </div>
-        )}
-           </div>
-           </div>
-      </motion.div>
-
-      {/* Alerts List */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.3 }}
-        className="space-y-3"
-      >
-        <AnimatePresence mode="popLayout">
-          {filteredAlerts.length > 0 ? (
-            filteredAlerts.map((alert) => (
-              <motion.div
-                key={alert.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-                layoutId={`alert-${alert.id}`}
-              >
-                <Card className="bg-gradient-to-r from-[#0A0F1C] to-[#151B2C] rounded-2xl border border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="flex gap-4 p-4">
-                      {/* Icon */}
-                      <div className="flex-shrink-0 flex items-start justify-center pt-1">
-                        {getSeverityIcon(alert.severity)}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-3 flex-wrap">
-                          <div className="flex-1">
-                            <h3 className="text-white font-semibold text-base sm:text-lg rounded-2xl">
-                              {alert.title}
-                            </h3>
-                            <p className="text-slate-400 text-sm mt-1">
-                              {alert.description}
-                            </p>
-                          </div>
-
-                          {/* Badges */}
-                          <div className="flex gap-2 flex-wrap justify-end">
-                            <Badge
-                              variant={getSeverityBadgeColor(alert.severity)}
-                              className="capitalize rounded-2xl"
-                            >
-                              {alert.severity}
-                            </Badge>
-                            <Badge
-                              className={`capitalize border  rounded-2xl ${getStatusColor(
-                                alert.status
-                              )}`}
-                              variant="outline"
-                            >
-                              {alert.status}
-                            </Badge>
-                          </div>
-                        </div>
-
-                        {/* Additional Info - Expanded */}
-                        <AnimatePresence>
-                          {expandedAlert === alert.id && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="mt-4 pt-4 border-t border-slate-700 space-y-2"
-                            >
-                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                                <div>
-                                  <span className="text-slate-500">Type:</span>
-                                  <p className="text-white font-medium capitalize">
-                                    {alert.type}
-                                  </p>
-                                </div>
-                                <div>
-                                  <span className="text-slate-500">
-                                    Affected Service:
-                                  </span>
-                                  <p className="text-white font-medium">
-                                    {alert.affectedServices}
-                                  </p>
-                                </div>
-                                <div>
-                                  <span className="text-slate-500">Endpoint:</span>
-                                  <p className="text-cyan-400 font-mono text-xs">
-                                    {alert.endpoint}
-                                  </p>
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
-                        {/* Meta Info */}
-                        <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
-                          <span>{formatTime(alert.timestamp)}</span>
-                          <button
-                            onClick={() => toggleExpand(alert.id)}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
-                          >
-                            {expandedAlert === alert.id ? (
-                              <>
-                                <EyeOff size={14} /> Hide details
-                              </>
-                            ) : (
-                              <>
-                                <Eye size={14} /> Show details
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex flex-col gap-2 flex-shrink-0">
-                        {alert.status === "active" && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => resolveAlert(alert.id)}
-                            className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 text-xs h-8"
-                          >
-                            <CheckCircle2 size={14} className="mr-1" />
-                            Resolve
-                          </Button>
-                        )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => deleteAlert(alert.id)}
-                          className="text-red-400 hover:bg-red-500/10 text-xs h-8"
-                        >
-                          <Trash2 size={14} className="mr-1" />
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-12 bg-[#0A0F1C] border border-slate-700/50 rounded-lg"
-            >
-              <CheckCircle2 className="text-emerald-500 mb-4" size={48} />
-              <h3 className="text-white font-semibold text-lg">All clear!</h3>
-              <p className="text-slate-400 mt-1">No alerts to display</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+            <div className="flex gap-4">
+              <div className="relative w-64">
+                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+                 <Input 
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                   placeholder="Search incidents..." 
+                   className="pl-10 bg-transparent border-slate-800 text-[10px] font-black uppercase h-9 rounded-sm"
+                 />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader className="bg-slate-900/50 border-b border-slate-800">
+                <TableRow className="border-none hover:bg-transparent">
+                  <TableHead className="text-slate-500 font-bold text-[10px] uppercase tracking-widest px-8 h-12">Event Time</TableHead>
+                  <TableHead className="text-slate-500 font-bold text-[10px] uppercase tracking-widest h-12">Incident Identity</TableHead>
+                  <TableHead className="text-slate-500 font-bold text-[10px] uppercase tracking-widest h-12">Security Domain</TableHead>
+                  <TableHead className="text-slate-500 font-bold text-[10px] uppercase tracking-widest text-center h-12">Severity</TableHead>
+                  <TableHead className="text-slate-500 font-bold text-[10px] uppercase tracking-widest text-right px-8 h-12">Resolution</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAlerts.length > 0 ? filteredAlerts.map((alert) => (
+                  <TableRow key={alert.id} className="border-slate-800/40 hover:bg-slate-800/20 transition-colors group">
+                    <TableCell className="text-slate-500 font-mono text-[10px] px-8 py-5">
+                      {alert.time}
+                    </TableCell>
+                    <TableCell>
+                       <div className="flex flex-col">
+                          <span className="text-xs font-bold text-white uppercase tracking-tight">{alert.title}</span>
+                          <span className="text-[10px] text-slate-600 font-mono mt-0.5">ID: {alert.id}042-X</span>
+                       </div>
+                    </TableCell>
+                    <TableCell>
+                       <Badge className="bg-slate-800/50 text-slate-400 text-[8px] font-black uppercase rounded-sm border-none px-1.5">{alert.service}</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                       <span className={`text-[10px] font-black uppercase tracking-widest ${
+                         alert.severity === 'critical' ? 'text-rose-500' : 'text-emerald-500'
+                       }`}>
+                         {alert.severity}
+                       </span>
+                    </TableCell>
+                    <TableCell className="text-right px-8">
+                       <Button variant="ghost" size="sm" className="text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-widest">
+                         Investigate
+                       </Button>
+                    </TableCell>
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-48 text-center text-slate-600 font-mono text-xs uppercase tracking-widest">
+                       Silent state: No active incidents
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

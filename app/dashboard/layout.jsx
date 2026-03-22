@@ -28,7 +28,7 @@ export default function Layout({ children }) {
                 <SidebarLeft />
                 <SidebarInset>
                     <NavHeader />
-                    <main className="bg-gradient-to-b from-[#3d579b] via-[#293f74] to-[#0B1120] h-full text-white">{children}</main>
+                    <main className="bg-[#020617] bg-dot-pattern min-h-full text-white">{children}</main>
                 </SidebarInset>
             </SidebarProvider>
 
